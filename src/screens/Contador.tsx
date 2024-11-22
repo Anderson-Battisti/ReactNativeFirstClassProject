@@ -1,8 +1,11 @@
+import { useNavigation } from '@react-navigation/native';
 import { StatusBar } from 'expo-status-bar';
 import { useState } from 'react';
 import { SafeAreaView, StyleSheet, Text, Touchable, TouchableOpacity, View } from 'react-native';
 
-export default function App() {
+export default function Contador() {
+
+  const navigator = useNavigation();
 
   const [count, setCount] = useState<number>(0)
   return (
