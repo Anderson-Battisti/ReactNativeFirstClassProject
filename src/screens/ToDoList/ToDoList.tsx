@@ -1,21 +1,22 @@
-import { SafeAreaView, ScrollView, Text, TextInput } from "react-native"
+import { Alert, FlatList, SafeAreaView, ScrollView, Text, TextInput, TouchableOpacity, View } from "react-native"
 import { theme } from "../../themes/theme";
 import { useEffect, useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { Icon } from "../../components/Icons";
 
 export const ToDoList = () => {
 
     const [input, setInput] = useState<string>('');
-    const [todoList, setTodoList] = useState<string[]>([]);
+    const [todoList, setTodoList] = useState<ITask[]>([]);
 
     const save = (text: string) => 
     {
-        const newList = [...todoList, text];
+        const newList = [...todoList, {id: (todoList.length + 1), title: text, checked: false}];
         setTodoList(newList);
         storeData(newList);
     }
 
-    const storeData = async (value: string[]) =>
+    const storeData = async (value: ITask[]) =>
     {
         try 
         {
@@ -39,17 +40,72 @@ export const ToDoList = () => {
         {
           // error reading value
         }
-      };
+    };
 
-    useEffect(() => 
+    const removeItem = (id: number) =>
+    {
+        try
         {
-            const fetchData = async () =>
-            {
-                let toDoList: string[] = await getData();
-                setTodoList(toDoList);
-            }
-            fetchData();
-        }, [] // O array de dependencias vazio faz com que esse useEffect seja executado apenas 1 vez, na primeira vez que a tela for renderizada
+            Alert.alert('Remover Item', 'Deseja realmente excluir este item?', 
+            [
+                {
+                    text: 'Cancelar',
+                    onPress: () =>
+                    {
+                        console.log('Cancelado');
+                    }
+                },
+                {
+                    text: 'Sim',
+                    onPress: () =>
+                    {
+                        const newTodoList = todoList.filter(item => item.id != id);
+                        setTodoList(newTodoList);
+                        storeData(newTodoList);
+                    }
+                }
+            ]);
+        }
+        catch (error)
+        {
+            console.log("removeItem: ", error);
+        }
+    }
+
+    const updateItem = (id: number) =>
+    {
+        try
+        {
+            todoList.map(item =>
+            (item.id === id) ? {...item, checked: !item.checked} : {...item})  
+        }
+        catch (error)
+        {
+            console.log('updateItem' + error);
+        }
+    }
+
+    useEffect(() => {
+
+        const fetchData = async () => {
+            const fetch = await getData();
+            setTodoList(fetch);
+        }
+
+        fetchData();
+
+    }, []);
+
+    const Item = ({id, title, checked}: ITask) => (
+        <View style={{ flexDirection: 'row'}} >
+            <TouchableOpacity onPress={() => updateItem(id)} >
+                <Icon name={checked ? 'check-square' : 'square'} size={22} />
+            </TouchableOpacity>
+            <Text style={theme.listItem}>{title}</Text>
+            <TouchableOpacity onPress={() => removeItem(id)}>
+                <Icon name='trash' size={22} />
+            </TouchableOpacity>
+        </View>
     );
 
     return (
@@ -65,15 +121,12 @@ export const ToDoList = () => {
             />
 
             <Text style={theme.label}>Lista de Tarefas:</Text>
-            <ScrollView showsVerticalScrollIndicator={false}>
-                {
-                    todoList.map((tarefa, index) => (
-                        <Text
-                            style={theme.listItem}
-                            key={index}>{tarefa}</Text>
-                    ))
-                }
-            </ScrollView> 
+
+            <FlatList
+                data={todoList}
+                renderItem={({ item }) => <Item title={item.title} id={item.id} checked={item.checked} />}
+                keyExtractor={item => item.id?.toString()}
+            />
         </SafeAreaView>
     )
 }

@@ -1,4 +1,5 @@
-import Entypo from '@expo/vector-icons/Entypo';
+import { Feather } from '@expo/vector-icons';
+import React from 'react';
 
 type TIcon =
 {
@@ -9,6 +10,6 @@ type TIcon =
 export function Icon({name, size}: TIcon)
 {
     return (
-        <Entypo name={name} size={size} color="black"/>
+        <Feather name={name} size={size} color="black"/>
     );
 }
