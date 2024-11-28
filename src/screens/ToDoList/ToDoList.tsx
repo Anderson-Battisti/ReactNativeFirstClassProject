@@ -1,4 +1,4 @@
-import { Alert, FlatList, SafeAreaView, ScrollView, Text, TextInput, TouchableOpacity, View } from "react-native"
+import { Alert, FlatList, SafeAreaView, Text, TextInput, TouchableOpacity, View } from "react-native"
 import { theme } from "../../themes/theme";
 import { useEffect, useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -101,7 +101,7 @@ export const ToDoList = () => {
             <TouchableOpacity onPress={() => updateItem(id)} >
                 <Icon name={checked ? 'check-square' : 'square'} size={22} />
             </TouchableOpacity>
-            <Text style={theme.listItem}>{title}</Text>
+            <Text style={[theme.listItem, {fontSize: 20}]} >{title}</Text>
             <TouchableOpacity onPress={() => removeItem(id)}>
                 <Icon name='trash' size={22} />
             </TouchableOpacity>

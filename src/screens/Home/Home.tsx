@@ -22,6 +22,9 @@ export function Home()
                 <TouchableOpacity onPress={() => navigator.navigate("ToDoList")} style={theme.button}>
                     <Text style={theme.buttonText}>To Do List</Text>
                 </TouchableOpacity>
+                <TouchableOpacity onPress={() => navigator.navigate("Login")} style={theme.button}>
+                    <Text style={theme.buttonText}>Login Screen</Text>
+                </TouchableOpacity>
             </View>
         </SafeAreaView>
     );
